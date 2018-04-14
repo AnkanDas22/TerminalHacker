@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class Hacker : MonoBehaviour {
     string[] level1passwords = { "books","aisle","shelf","borrow","silence","librarian" };
-    string[] level2passwords = { "jail", "bail", "cops", "framed", "hellinacell","holster" };
-    string[] level3passwords = { "america", "probe", "moonlanding", "astronaut", "nocosmonaut" };
+    string[] level2passwords = { "uniform", "bail", "cops", "framed", "hellinacell","holster" };
+    string[] level3passwords = { "america", "probe", "moonlanding", "astronaut", "nocosmonaut", "planetx" };
+    string[] level4passwords = { "iotrocks", "alexa", "anonymous", "videogames", "gamer1234", "password" };
 
     int level;
     enum Screen {MainMenu, Password, Win};
     Screen currentScreen = Screen.MainMenu;
     string password;
     int score = 0;
-    bool q1 = false, q2 = false, q3 = false, msgdisp = false;
+    bool q1 = false, q2 = false, q3 = false, q4=false, msgdisp = false;
 
 	void Start () {
         ShowMainMenu();
@@ -25,6 +26,13 @@ public class Hacker : MonoBehaviour {
             currentScreen = Screen.MainMenu;
             ShowMainMenu();
         }
+        else if (input.ToUpper() == "EXIT" || input.ToUpper() == "QUIT" || input.ToUpper() == "CLOSE")
+        {
+            Terminal.WriteLine("If the app is on the web, close the tab.");
+            Application.Quit();
+        }
+        else if (input.ToUpper() == "HELP")
+            ShowHelp();
         else if (currentScreen == Screen.MainMenu)
         {
             RunMainMenu(input);
@@ -41,13 +49,21 @@ public class Hacker : MonoBehaviour {
 
     }
 
+    void ShowHelp()
+    {
+        Terminal.WriteLine("Press 'menu' to return to menu\nPress 'quit'/'close'/'exit' to exit the game");
+    }
+
     void RunMainMenu(string input)
     {
-        bool isValidLevelNumber = (input == "1" || input == "2" || input == "3");
+        bool isValidLevelNumber = (input == "1" || input == "2" || input == "3" || input == "4" || input == "5");
         if (isValidLevelNumber)
         {
             level = int.Parse(input);
-            AskForPassword();
+            if (level < 5 && level >= 1)
+                AskForPassword();
+            else if (level == 5)
+                ShowHelp();
         }
         else if (input == "007")
         {
@@ -63,7 +79,7 @@ public class Hacker : MonoBehaviour {
     void ShowMainMenu()
     {
         Terminal.ClearScreen();
-        Terminal.WriteLine("What do you want to hack?\nPress 1 for the local library\nPress 2 for the police station\nPress 3 for NASA\nEnter your choice:");
+        Terminal.WriteLine("What do you want to hack?\nPress 1 for the local library\nPress 2 for the police station\nPress 3 for NASA\nPress 4 for IOT\nPress 5 for Help\nEnter your choice:");
     }
 
     void AskForPassword()
@@ -86,6 +102,9 @@ public class Hacker : MonoBehaviour {
                 break;
             case 3:
                 password = level3passwords[Random.Range(0, level3passwords.Length)];
+                break;
+            case 4:
+                password = level4passwords[Random.Range(0, level4passwords.Length)];
                 break;
             default:
                 Debug.LogError("Invalid Level");
@@ -150,11 +169,28 @@ public class Hacker : MonoBehaviour {
 | | | | (_| \__ \ (_| |
 |_| |_|\__,_|___/\__,_|");
                 break;
+            case 4:
+                if(!q4)
+                {
+                    score++;
+                    q4 = true;
+                }
+                Terminal.WriteLine("Don't watch your neighbours...\n");
+                Terminal.WriteLine(@"
+                         (     
+       (  (           (  )\ )  
+ `  )  )\))(   (     ))\(()/(  
+ /(/( ((_)()\  )\ ) /((_)((_)) 
+((_)_\_(()((_)_(_/((_))  _| |  
+| '_ \) V  V / ' \)) -_) _` |  
+| .__/ \_/\_/|_||_|\___\__,_|  
+|_|                           ");
+            break;
             default:
                 Terminal.WriteLine("Nice try breaching into the game...");
                 break;
         }
-        if (score == 3 && !msgdisp)
+        if (score == 4 && !msgdisp)
         {
             msgdisp = true;
             Terminal.WriteLine("\nYou have successfully completed the game! You can keep playing to your heart's content though!");
